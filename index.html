@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- First Division: Drawing Area -->
+    <div id="drawingArea" class="division">
+      <h3>Drawing Area</h3>
+      <canvas id="drawingCanvas"></canvas>
+      <div class="shape-options">
+        <input
+          type="radio"
+          id="rectangle"
+          name="shape"
+          value="rectangle"
+          checked
+        />
+        <label for="rectangle">Rectangle</label>
+        <input type="radio" id="square" name="shape" value="square" />
+        <label for="square">Square</label>
+        <input type="radio" id="circle" name="shape" value="circle" />
+        <label for="circle">Circle</label>
+      </div>
+      <p id="mouseCoordinates">
+        Move Mouse in Canvas Region to get x,y coordinates
+      </p>
+    </div>
+    <!-- Second Division: Animation Area -->
+    <div class="division">
+      <h3>Animation Area</h3>
+      <button id="animateBtn">Animate</button>
+      <div
+        id="animationArea"
+        class="animeDiv"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      ></div>
+    </div>
+
+    <!-- Third Division: Modification Area -->
+    <div
+      id="modificationArea"
+      class="division"
+      ondrop="drop(event)"
+      ondragover="allowDrop(event)"
+    >
+      <h3>Modification Area</h3>
+      <div class="controls">
+        <label class="control-label" for="colorPicker">Color:</label>
+        <input type="color" id="colorPicker" />
+      </div>
+      <div class="controls">
+        <label class="control-label" for="resize">Resize (Width):</label>
+        <input type="range" id="resize" min="50" max="300" value="100" />
+      </div>
+      <div class="controls">
+        <button id="calculateAreaBtn">Calculate Area</button>
+        <p id="areaResult"></p>
+      </div>
+    </div>
+
+    <!-- Fourth Division: Deletion Area -->
+    <div
+      id="deletionArea"
+      class="division"
+      ondrop="drop(event)"
+      ondragover="allowDrop(event)"
+    >
+      <h3>Deletion Area</h3>
+      <button id="deleteShapeBtn">Delete Shape</button>
+      <ul id="deletedShapesList"></ul>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+body {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 70px;
+  padding: 10px;
+}
+#drawingCanvas {
+  width: 100%; /* Makes the canvas width responsive */
+
+  height: 80%; /* Adjust height automatically based on aspect ratio */
+}
+.division {
+  border: 2px solid #000;
+  margin: 5px;
+  padding: 10px;
+  height: 500px;
+  flex: 1;
+  overflow: auto;
+}
+#drawingArea {
+  background-color: #f0f0f0;
+}
+#animationArea {
+  background-color: #d0f0d0;
+}
+#modificationArea {
+  background-color: #f0d0f0;
+}
+#deletionArea {
+  background-color: #f0f0d0;
+}
+canvas {
+  border: 1px solid black;
+}
+.shape-options {
+  margin-top: 10px;
+}
+.controls {
+  margin-top: 20px;
+}
+.control-label {
+  margin-right: 10px;
+}
