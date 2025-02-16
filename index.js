@@ -1,165 +1,182 @@
 const drawingCanvas = document.getElementById("drawingCanvas");
 const drawingCtx = drawingCanvas.getContext("2d");
+const animationArea = document.getElementById("animationArea");
 let shapes = [];
 let selectedShape = null;
 let isDragging = false;
 let offsetX, offsetY;
-let currentShapeType = "rectangle"; // Default shape type
+let currentShapeType = "rectangle";
 
-drawingCanvas.width = 400; // Set canvas width
-drawingCanvas.height = 400; // Set canvas height
+drawingCanvas.width = 400;
+drawingCanvas.height = 400;
 
-// Function to create a shape object
 function createShape(type, x, y) {
-  const shape = {
+  return {
     type,
     x,
     y,
-    width: 100,
-    height: 100,
-    radius: 50,
+    width: type === "rectangle" ? 165 : 75,
+    height: type === "rectangle" ? 70 : 60,
+    radius: type === "circle" ? 40 : 0, // Circle’s radius
     color: "#FF0000",
   };
-
-  if (type === "square") {
-    shape.width = 80;
-    shape.height = 80;
-  } else if (type === "rectangle") {
-    shape.width = 200;
-    shape.height = 50;
-  } else if (type === "circle") {
-    shape.radius = 25;
-  }
-  return shape;
 }
 
-// Draw a shape on the canvas
-function drawShape(shape) {
-  if (!shape) {
-    console.error("Shape is null or undefined");
-    return;
-  }
-
+function drawShapes() {
   drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
 
-  if (shape.type === "rectangle" || shape.type === "square") {
+  shapes.forEach((shape) => {
     drawingCtx.fillStyle = shape.color;
-    drawingCtx.fillRect(shape.x, shape.y, shape.width, shape.height);
-  } else if (shape.type === "circle") {
-    drawingCtx.fillStyle = shape.color;
-    drawingCtx.beginPath();
-    drawingCtx.arc(
-      shape.x + shape.radius,
-      shape.y + shape.radius,
-      shape.radius,
-      0,
-      2 * Math.PI
-    );
-    drawingCtx.fill();
-  }
+    if (shape.type === "circle") {
+      drawingCtx.beginPath();
+      // Draw circle using its bounding box: center at (x+radius, y+radius)
+      drawingCtx.arc(
+        shape.x + shape.radius,
+        shape.y + shape.radius,
+        shape.radius,
+        0,
+        2 * Math.PI
+      );
+      drawingCtx.fill();
+    } else {
+      drawingCtx.fillRect(shape.x, shape.y, shape.width, shape.height);
+    }
+  });
 }
 
-// Function to handle mousedown event for drawing shape
 drawingCanvas.addEventListener("mousedown", (e) => {
-  const mouseX = e.offsetX;
-  const mouseY = e.offsetY;
-  const shape = createShape(currentShapeType, mouseX, mouseY);
-  shapes.push(shape);
-  drawShape(shape);
-});
+  // Calculate mouse coordinates relative to the canvas
+  const rect = drawingCanvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
 
-// Function to handle double-click event for selecting shape
-drawingCanvas.addEventListener("dblclick", (e) => {
-  const mouseX = e.offsetX;
-  const mouseY = e.offsetY;
-  const shape = shapes.find((shape) => {
-    if (shape.type === "rectangle" || shape.type === "square") {
+  // Check if an existing shape is clicked
+  selectedShape = shapes.find((shape) => {
+    if (shape.type === "circle") {
+      const distance = Math.sqrt(
+        (mouseX - (shape.x + shape.radius)) ** 2 +
+          (mouseY - (shape.y + shape.radius)) ** 2
+      );
+      return distance <= shape.radius;
+    } else {
       return (
         mouseX >= shape.x &&
         mouseX <= shape.x + shape.width &&
         mouseY >= shape.y &&
         mouseY <= shape.y + shape.height
       );
-    } else if (shape.type === "circle") {
-      const dist = Math.sqrt(
-        Math.pow(mouseX - (shape.x + shape.radius), 2) +
-          Math.pow(mouseY - (shape.y + shape.radius), 2)
-      );
-      return dist <= shape.radius;
     }
-    return false;
   });
 
-  if (shape) {
+  if (selectedShape) {
+    // Start dragging the existing shape
     isDragging = true;
-    offsetX = mouseX - shape.x;
-    offsetY = mouseY - shape.y;
-    selectedShape = shape;
+    offsetX = mouseX - selectedShape.x;
+    offsetY = mouseY - selectedShape.y;
+  } else {
+    // Create a new shape if none was clicked
+    selectedShape = createShape(currentShapeType, mouseX, mouseY - 5);
+    shapes = [];
+    shapes.push(selectedShape);
+    drawShapes();
+    isDragging = true;
+    offsetX = mouseX - selectedShape.x;
+    offsetY = mouseY - selectedShape.y;
   }
 });
 
-// Function to handle mousemove event for dragging shape
-drawingCanvas.addEventListener("mousemove", (e) => {
-  if (isDragging && selectedShape) {
-    const mouseX = e.offsetX;
-    const mouseY = e.offsetY;
+// Listen on document to capture mouse movements outside the canvas
+document.addEventListener("mousemove", (e) => {
+  if (!isDragging || !selectedShape) return;
 
-    // Update the position of the shape while dragging
-    selectedShape.x = mouseX - offsetX;
-    selectedShape.y = mouseY - offsetY;
+  // Compute mouse position relative to the canvas
+  const rect = drawingCanvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
 
-    // Check if the shape touches the right edge of the canvas
-    if (
-      selectedShape.x + selectedShape.width >= drawingCanvas.width ||
-      selectedShape.x + selectedShape.radius >= drawingCanvas.width
-    ) {
-      // Create a new div in the animation area
-      const animateDiv = document.getElementById("animationArea");
-      const shapeDiv = document.createElement("div");
-      shapeDiv.classList.add("shape");
-      shapeDiv.style.backgroundColor = selectedShape.color;
+  selectedShape.x = mouseX - offsetX;
+  selectedShape.y = mouseY - offsetY;
 
-      if (
-        selectedShape.type === "rectangle" ||
-        selectedShape.type === "square"
-      ) {
-        shapeDiv.style.width = `${selectedShape.width}px`;
-        shapeDiv.style.height = `${selectedShape.height}px`;
-        shapeDiv.style.left = `${selectedShape.x}px`;
-        shapeDiv.style.top = `${selectedShape.y}px`;
-      } else if (selectedShape.type === "circle") {
-        shapeDiv.classList.add("circle");
-        shapeDiv.style.width = `${selectedShape.radius * 2}px`;
-        shapeDiv.style.height = `${selectedShape.radius * 2}px`;
-        shapeDiv.style.left = `${selectedShape.x - selectedShape.radius}px`;
-        shapeDiv.style.top = `${selectedShape.y - selectedShape.radius}px`;
-      }
-
-      shapeDiv.setAttribute("draggable", "true");
-      animateDiv.appendChild(shapeDiv);
-
-      // Remove the shape from the canvas
-      shapes = shapes.filter((s) => s !== selectedShape);
-      drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-      isDragging = false;
-      selectedShape = null;
-    }
-    drawShape(selectedShape);
+  let isAtRightEdge = false;
+  if (selectedShape.type === "circle") {
+    // Check if the entire circle (bounding box: 2*radius) reaches the canvas edge
+    isAtRightEdge =
+      selectedShape.x + selectedShape.radius * 2 >= drawingCanvas.width;
+  } else {
+    // For rectangle/square
+    isAtRightEdge =
+      selectedShape.x + selectedShape.width >= drawingCanvas.width;
   }
+
+  if (isAtRightEdge) {
+    createDivShape(selectedShape);
+    shapes = [];
+    isDragging = false;
+    selectedShape = null;
+  }
+
+  drawShapes();
 });
 
-// Function to handle mouseup event to stop dragging
-drawingCanvas.addEventListener("mouseup", () => {
+// Listen on document to capture mouseup even if outside canvas
+document.addEventListener("mouseup", () => {
   isDragging = false;
-  selectedShape = null;
 });
 
-// Create a new shape when a radio button is selected
+drawingCanvas.addEventListener("dblclick", (e) => {
+  const rect = drawingCanvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  selectedShape = shapes.find((shape) => {
+    if (shape.type === "circle") {
+      const distance = Math.sqrt(
+        (mouseX - (shape.x + shape.radius)) ** 2 +
+          (mouseY - (shape.y + shape.radius)) ** 2
+      );
+      return distance <= shape.radius;
+    } else {
+      return (
+        mouseX >= shape.x &&
+        mouseX <= shape.x + shape.width &&
+        mouseY >= shape.y &&
+        mouseY <= shape.y + shape.height
+      );
+    }
+  });
+
+  if (selectedShape) {
+    createDivShape(selectedShape);
+    shapes = shapes.filter((shape) => shape !== selectedShape);
+    selectedShape = null;
+    drawShapes();
+  }
+});
+
+function createDivShape(shape) {
+  const shapeDiv = document.createElement("div");
+  shapeDiv.classList.add("shape");
+  shapeDiv.style.backgroundColor = shape.color;
+  shapeDiv.setAttribute("id", "shape1");
+  shapeDiv.setAttribute("draggable", true);
+
+  if (shape.type === "circle") {
+    shapeDiv.style.width = shapeDiv.style.height = `${shape.radius * 2}px`;
+    shapeDiv.style.borderRadius = "50%";
+  } else {
+    shapeDiv.style.width = `${shape.width}px`;
+    shapeDiv.style.height = `${shape.height}px`;
+  }
+  animationArea.innerHTML = "";
+  animationArea.appendChild(shapeDiv);
+}
+
+function allowDrop(event) {
+  event.preventDefault();
+}
+
 document.querySelectorAll('input[name="shape"]').forEach((input) => {
   input.addEventListener("change", (e) => {
     currentShapeType = e.target.value;
   });
 });
-
-// Initial shape creation
-createShape("rectangle");
