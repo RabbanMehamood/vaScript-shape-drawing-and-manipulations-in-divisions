@@ -18,13 +18,37 @@ body {
   overflow: auto;
 }
 #drawingArea {
-  background-color: #f0f0f0;
+  background-color: #f0d0f0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
 }
 #animationArea {
-  background-color: #d0f0d0;
+  margin-top: 10px;
+  background-color: #f0f0d0;
+  height: 80%;
+  width: 99%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px rgba(39, 6, 6, 0.529) solid;
+  border-radius: 4px;
+}
+.viewArea {
+  height: 70%;
+  margin-top: 10px;
+  width: 99%;
+  display: flex;
+  justify-content: center;
+  border-radius: 4px;
+
+  align-items: center;
+  border: 1px rgba(39, 6, 6, 0.529) solid;
 }
 #modificationArea {
-  background-color: #f0d0f0;
+  background-color: #f0f0d0;
 }
 #deletionArea {
   background-color: #f0f0d0;
@@ -40,4 +64,18 @@ canvas {
 }
 .control-label {
   margin-right: 10px;
+}
+
+@keyframes example {
+  from {
+    background-color: red;
+  }
+  to {
+    background-color: yellow;
+  }
+}
+.colorChange {
+  background-color: red;
+  animation-name: example;
+  animation-duration: 4s;
 }

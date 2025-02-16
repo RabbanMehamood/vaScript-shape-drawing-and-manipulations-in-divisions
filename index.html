@@ -25,9 +25,6 @@
         <input type="radio" id="circle" name="shape" value="circle" />
         <label for="circle">Circle</label>
       </div>
-      <p id="mouseCoordinates">
-        Move Mouse in Canvas Region to get x,y coordinates
-      </p>
     </div>
     <!-- Second Division: Animation Area -->
     <div class="division">
@@ -42,44 +39,45 @@
       <div
         id="animationArea"
         class="animeDiv"
-        ondrop="drop(event)"
-        ondragover="allowDrop(event)"
+        ondrop="dropHandler(event)"
+        ondragover="dragoverHandler(event)"
       ></div>
     </div>
 
     <!-- Third Division: Modification Area -->
-    <div
-      id="modificationArea"
-      class="division"
-      ondrop="drop(event)"
-      ondragover="allowDrop(event)"
-    >
+    <div class="division">
       <h3>Modification Area</h3>
-      <div class="controls">
-        <label class="control-label" for="colorPicker">Color:</label>
-        <input type="color" id="colorPicker" />
-      </div>
-      <div class="controls">
-        <label class="control-label" for="resize">Resize (Width):</label>
-        <input type="range" id="resize" min="50" max="300" value="100" />
-      </div>
-      <div class="controls">
-        <button id="calculateAreaBtn">Calculate Area</button>
-        <p id="areaResult"></p>
-      </div>
+
+      <label class="control-label" for="colorPicker">Color:</label>
+      <input type="color" id="colorPicker" />
+      <button id="calculateAreaBtn">Calculate Area</button>
+      <span id="areaResult"></span>
+      <br />
+      <label class="control-label" for="resize">Resize:</label>
+      <input type="range" id="resize" min="50" max="300" value="100" />
+      <br />
+
+      <div
+        id="modificationArea"
+        ondrop="dropHandler(event)"
+        ondragover="dragoverHandler(event)"
+        class="viewArea"
+      ></div>
     </div>
 
     <!-- Fourth Division: Deletion Area -->
-    <div
-      id="deletionArea"
-      class="division"
-      ondrop="drop(event)"
-      ondragover="allowDrop(event)"
-    >
+    <div class="division">
       <h3>Deletion Area</h3>
       <button id="deleteShapeBtn">Delete Shape</button>
       <ul id="deletedShapesList"></ul>
+      <div
+        id="deletionArea"
+        ondrop="dropHandler(event)"
+        ondragover="dragoverHandler(event)"
+        class="viewArea"
+      ></div>
     </div>
+
     <script src="index.js"></script>
   </body>
 </html>
