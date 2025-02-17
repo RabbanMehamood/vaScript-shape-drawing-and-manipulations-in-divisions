@@ -196,37 +196,8 @@ function addEventListenersToShapeDiv(shapeDiv) {
         .addEventListener("click", () => {
           animateShape(shapeDiv, "vertical");
         });
-    } else if (parentDiv === "deletionArea") {
-      document.getElementById("deleteButton").addEventListener("click", () => {
-        deleteShape(shapeDiv);
-      });
     }
   });
-}
-
-function animateShape(shapeDiv, direction) {
-  let position = 0;
-  const id = setInterval(frame, 5);
-  function frame() {
-    if (position === 350) {
-      clearInterval(id);
-    } else {
-      position++;
-      if (direction === "horizontal") {
-        shapeDiv.style.left = position + "px";
-      } else if (direction === "vertical") {
-        shapeDiv.style.top = position + "px";
-      }
-    }
-  }
-}
-
-function deleteShape(shapeDiv) {
-  const deletionTime = new Date().toLocaleTimeString();
-  const deletionLog = document.createElement("div");
-  deletionLog.textContent = `Shape deleted at: ${deletionTime}`;
-  document.getElementById("deletionLog").appendChild(deletionLog);
-  shapeDiv.remove();
 }
 
 function allowDrop(event) {
@@ -237,6 +208,11 @@ function dragstartHandler(ev) {
   // Add the target element's id to the data transfer object
   ev.dataTransfer.setData("text/plain", ev.target.id);
   ev.dataTransfer.dropEffect = "move";
+  const shape = document.getElementById("animationArea").children[0];
+
+  // Remove previous animation classes if any
+  shape.classList.remove("move-horizontal");
+  shape.classList.remove("move-vertical");
 }
 
 function dragoverHandler(ev) {
