@@ -159,6 +159,7 @@ function createDivShape(shape) {
   shapeDiv.style.backgroundColor = shape.color;
 
   shapeDiv.setAttribute("draggable", true);
+  shapeDiv.style.position = "absolute";
 
   if (shape.type === "circle") {
     shapeDiv.style.width = shapeDiv.style.height = `${shape.radius * 2}px`;
@@ -167,6 +168,7 @@ function createDivShape(shape) {
   } else if (shape.type === "rectangle") {
     shapeDiv.style.width = `${shape.width}px`;
     shapeDiv.style.height = `${shape.height}px`;
+
     shapeDiv.setAttribute("id", "shape1");
   } else {
     shapeDiv.style.width = `${shape.width}px`;
@@ -265,7 +267,12 @@ document.getElementById("colorPicker").addEventListener("change", () => {
 document.getElementById("resize").addEventListener("change", () => {
   const chosenSize = document.getElementById("resize").value;
   const shapeDiv = document.getElementById("modificationArea").children[0];
-  if (shapeDiv && shapeDiv.parentElement.id === "modificationArea") {
+  if (document.getElementById("modificationArea").children[0].id === "shape1") {
+    let widthMore = parseInt(chosenSize);
+    widthMore += 80;
+    shapeDiv.style.width = `${widthMore}px`;
+    shapeDiv.style.height = `${chosenSize}px`;
+  } else if (shapeDiv && shapeDiv.parentElement.id === "modificationArea") {
     shapeDiv.style.width = `${chosenSize}px`;
     shapeDiv.style.height = `${chosenSize}px`;
   }
@@ -287,7 +294,9 @@ document.getElementById("calculateAreaBtn").addEventListener("click", () => {
   ) {
     document.getElementById("areaResult").textContent =
       2 *
-        parseFloat(document.getElementById("shape2" || "shape1").style.width) +
+        parseFloat(
+          document.getElementById("modificationArea").children[0].style.width
+        ) +
       "square pixels";
   }
 });
@@ -302,4 +311,22 @@ document.getElementById("deleteShapeBtn").addEventListener("click", () => {
     liItem.textContent = shapeName + " deleted at " + deletedTime;
     document.getElementById("deletedShapesList").appendChild(liItem);
   }
+});
+
+document.getElementById("anmtHorizontal").addEventListener("click", () => {
+  const shape = document.getElementById("animationArea").children[0];
+
+  // Remove previous animation classes if any
+  shape.classList.remove("move-vertical");
+  // Add horizontal movement animation class
+  shape.classList.add("move-horizontal");
+});
+
+document.getElementById("anmtVertical").addEventListener("click", () => {
+  const shape = document.getElementById("animationArea").children[0];
+
+  // Remove previous animation classes if any
+  shape.classList.remove("move-horizontal");
+  // Add vertical movement animation class
+  shape.classList.add("move-vertical");
 });

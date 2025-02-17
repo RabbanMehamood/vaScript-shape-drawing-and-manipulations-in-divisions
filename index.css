@@ -35,6 +35,7 @@ body {
   align-items: center;
   border: 1px rgba(39, 6, 6, 0.529) solid;
   border-radius: 4px;
+  position: relative;
 }
 .viewArea {
   height: 70%;
@@ -66,16 +67,28 @@ canvas {
   margin-right: 10px;
 }
 
-@keyframes example {
-  from {
-    background-color: red;
+@keyframes moveHorizontal {
+  0% {
+    left: 0;
   }
-  to {
-    background-color: yellow;
+  100% {
+    left: 170px; /* Move 350px to the right */
   }
 }
-.colorChange {
-  background-color: red;
-  animation-name: example;
-  animation-duration: 4s;
+
+@keyframes moveVertical {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 300px; /* Move 350px down */
+  }
+}
+
+.move-horizontal {
+  animation: moveHorizontal 2s forwards; /* 2 seconds duration */
+}
+
+.move-vertical {
+  animation: moveVertical 2s forwards; /* 2 seconds duration */
 }
